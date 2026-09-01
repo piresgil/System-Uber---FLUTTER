@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="400.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.InicioController">
+   <children>
+      <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Button id="btUser" fx:id="btUser" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onclickOnUser" prefHeight="50.0" prefWidth="200.0" text="Utilizadores" />
+            <Button id="btColaboradores" fx:id="btColaboradores" mnemonicParsing="false" onAction="#onclickOnColaborador" prefHeight="50.0" prefWidth="200.0" text="Colaboradores" />
+            <Button id="btCarros" fx:id="btCarros" mnemonicParsing="false" onAction="#onclickOnCarro" prefHeight="50.0" prefWidth="200.0" text="Carros" />
+            <Button id="btDespesas" fx:id="btDespesas" mnemonicParsing="false" onAction="#onclickOnDespesas" prefHeight="50.0" prefWidth="200.0" text="Despesas" />
+            <Button id="btcartao" fx:id="btcartao" mnemonicParsing="false" onAction="#onclickOnCartoes" prefHeight="50.0" prefWidth="200.0" text="Cartões" />
+            <Button id="btPagamentos" fx:id="btPagamentos" mnemonicParsing="false" onAction="#onclickOnPagamento" prefHeight="50.0" prefWidth="200.0" text="Pagamentos" />
+            <Button id="btLista" fx:id="btLista" mnemonicParsing="false" onAction="#onclickOnListagemPagamentos" prefHeight="50.0" prefWidth="200.0" text="Lista" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

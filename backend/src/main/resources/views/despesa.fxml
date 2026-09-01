@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="apPrincipal" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.DespesasController">
+    <children>
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+                <VBox>
+                    <children>
+                        <AnchorPane>
+                            <children>
+                                <Label alignment="TOP_CENTER" contentDisplay="CENTER" layoutX="-1.0" text="Despesas" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <font>
+                                        <Font size="36.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </AnchorPane>
+                        <AnchorPane>
+                            <children>
+                                <Label layoutX="150.0" layoutY="6.0" text="Cartao" />
+                                <ComboBox fx:id="comboBoxCartao" layoutX="190.0" layoutY="2.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="100.0" />
+                                <Label layoutX="150.0" layoutY="45.0" text="Nome" />
+                                <TextField fx:id="txtNome" layoutX="190.0" layoutY="41.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="100.0" />
+
+                                <Label layoutX="132.0" layoutY="83.0" text="Descrição" />
+                                <TextField fx:id="txtDescricao" layoutX="190.0" layoutY="79.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="100.0" />
+
+                                <Label layoutX="152.0" layoutY="122.0" text="Carro" />
+                                <ComboBox fx:id="comboBoxCarro" layoutX="190.0" layoutY="119.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="100.0" />
+                                <ComboBox fx:id="comboBoxMotorista" layoutX="190.0" layoutY="157.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="100.0" />
+
+                                <DatePicker fx:id="txtData" layoutX="190.0" layoutY="195.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="100.0" />
+
+                                <TextField fx:id="txtValor" layoutX="191.0" layoutY="234.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="100.0" />
+                                <Label layoutX="133.0" layoutY="161.0" text="Motorista" />
+                                <Label layoutX="159.0" layoutY="199.0" text="Data" />
+                                <Label layoutX="159.0" layoutY="237.0" text="Valor" />
+                            </children>
+                        </AnchorPane>
+                        <!-- Seção para tipos de despesas específicos -->
+                        <StackPane>
+                            <AnchorPane fx:id="paneAbastecimento" prefHeight="200.0" prefWidth="200.0">
+                                <Label layoutX="124.0" layoutY="63.0" text="Quantidade:" />
+                                <TextField fx:id="txtQuantidade" layoutX="191.0" layoutY="59.0" prefHeight="25.0" prefWidth="342.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="100.0" />
+                                <Label layoutX="141.0" layoutY="99.0" text="Unidade:" />
+                                <TextField fx:id="txtUnidade" layoutX="191.0" layoutY="95.0" prefHeight="25.0" prefWidth="342.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="100.0" />
+                            </AnchorPane>
+                        </StackPane>
+                    </children>
+                </VBox>
+                <AnchorPane>
+                    <children>
+
+                        <!-- Botão de Registo -->
+                        <Button fx:id="btRegistar" alignment="CENTER" contentDisplay="CENTER" layoutX="400.0" onAction="#onclickOnRegistar" text="Registar" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="5.0" />
+                        <Button id="btEditar" fx:id="btEditar" mnemonicParsing="false" onAction="#onclickOnEditar" text="Editar" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="200.0" AnchorPane.topAnchor="5.0" />
+                        <Button id="btGravar" fx:id="btGravar" mnemonicParsing="false" onAction="#onclickOnGravar" text="Gravar" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="313.0" AnchorPane.topAnchor="5.0" />
+                        <Button id="btEliminar" fx:id="btEliminar" mnemonicParsing="false" onAction="#onclickOnEliminar" text="Eliminar" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="250.0" AnchorPane.topAnchor="5.0" />
+                    </children>
+                </AnchorPane>
+
+
+                <!-- Tabela de Despesas -->
+                <TableView fx:id="tableView" prefHeight="584.0" prefWidth="600.0">
+                    <columns>
+                        <TableColumn fx:id="cartaoTipoColumn" text="Tipo" />
+                        <TableColumn fx:id="cartaoColumn" text="cartão" />
+                        <TableColumn fx:id="nomeColumn" text="Nome" />
+                        <TableColumn fx:id="descricaoColumn" text="Descrição" />
+                        <TableColumn fx:id="carroColumn" text="Carro" />
+                        <TableColumn fx:id="motoristaColumn" text="Motorista" />
+                        <TableColumn fx:id="dataColumn" text="Data" />
+                        <TableColumn fx:id="valorColumn" text="Valor" />
+
+                        <TableColumn fx:id="quantidadeColumn" text="Quantidade" />
+                        <TableColumn fx:id="unidadeColumn" text="Unidade" />
+                    </columns>
+                </TableView>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
