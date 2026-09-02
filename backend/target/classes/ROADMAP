@@ -1,0 +1,80 @@
+/*
+===========================================================
+        ROADMAP — Módulo de Pagamentos (System-Uber)
+===========================================================
+
+1) ✔ CORREÇÕES JÁ FEITAS
+-------------------------------------------
+- Corrigido ColaboradorService (remoção de static)
+- Injeção do repositório a funcionar corretamente
+- Importação Excel já lê colaboradores corretamente
+- Tabela atualiza listaOriginal + listaFiltrada
+- Erros de NULL resolvidos
+
+2) ⚠ MELHORIAS PENDENTES NA IMPORTAÇÃO EXCEL
+-------------------------------------------
+- Criar método robusto para:
+  • Tratar células nulas
+  • Tratar células numéricas como texto
+  • Validar datas em diferentes formatos
+  • Ignorar linhas vazias
+  • Validar plataforma e tipo
+  • Validar colaborador inexistente
+  • Gerar relatório de erros por linha
+  • Importar apenas linhas válidas
+
+3) ➕ FUNCIONALIDADES A ADICIONAR
+-------------------------------------------
+A) Exportação
+   - Exportar tabela para CSV
+   - Exportar tabela para Excel (XLSX)
+   - Exportar apenas filtrados
+
+B) Totais automáticos
+   - Total geral (€)
+   - Total por plataforma
+   - Total por tipo de pagamento
+   - Atualização automática ao filtrar
+
+C) Filtros avançados
+   - Filtro por intervalo de datas
+   - Filtro por colaborador
+   - Filtro por plataforma
+   - Filtro por tipo
+   - Filtro por valor mínimo/máximo
+   - Filtro por texto (nome, plataforma, tipo)
+
+D) UI/UX
+   - Indicador de carregamento durante importação
+   - Mensagens de sucesso/erro mais detalhadas
+   - Botão “Limpar filtros”
+   - Botão “Recarregar dados”
+
+E) Gráficos (opcional)
+   - Gráfico de barras: total por plataforma
+   - Gráfico de pizza: percentagem por tipo
+   - Gráfico de linha: pagamentos por mês
+
+F) Paginação (opcional)
+   - Paginação automática na TableView
+   - Navegação: anterior / seguinte / ir para página
+
+4) 🧹 REVISÃO DE ARQUITETURA (futuro)
+-------------------------------------------
+- Criar PaymentDTO para separar UI do modelo
+- Criar PaymentMapper
+- Criar PaymentValidator (para Excel e UI)
+- Criar PaymentImportService (separar lógica do controller)
+- Criar PaymentExportService
+- Melhorar organização dos controllers
+
+5) 🧪 TESTES (quando o módulo estiver estável)
+-------------------------------------------
+- Testes unitários do serviço
+- Testes de importação com ficheiros reais
+- Testes de exportação
+- Testes de filtros
+- Testes de UI (manual)
+
+===========================================================
+*/

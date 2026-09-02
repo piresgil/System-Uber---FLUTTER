@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/cartoes")
+@CrossOrigin(origins = "*") // Necessário para o Flutter Web aceitar os pedidos sem bloqueios CORS
 public class CartaoRestController {
 
     @Autowired

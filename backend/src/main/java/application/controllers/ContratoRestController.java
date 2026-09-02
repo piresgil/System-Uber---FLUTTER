@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/contratos")
+@CrossOrigin(origins = "*") // Necessário para evitar bloqueios do Flutter Web
 public class ContratoRestController {
 
     /**

@@ -1,8 +1,13 @@
 package application.services;
 
+import application.dto.DespesaDTO;
+import application.model.Carro;
 import application.model.Cartao;
+import application.model.Colaborador;
 import application.model.Despesa;
+import application.repositories.CarroRepository;
 import application.repositories.CartaoRepository;
+import application.repositories.ColaboradorRepository;
 import application.repositories.DespesaRepository;
 import application.services.exceptions.DatabaseException;
 import application.services.exceptions.ResourceNotFoundException;
@@ -19,14 +24,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Serviço responsável pela lógica de negócio da entidade Despesa.
+ * Atualizado para suportar operações baseadas em DTO (incluindo o armazenamento da faturaUrl)
+ * e manter a consistência de cache e base de dados.
+ * 
+ * @author Daniel Gil (adaptado)
+ */
 @Service
 public class DespesaService {
 
-    // Injeção de Dependências para o repositório de despesas.
     @Autowired
     private DespesaRepository repository;
+    
     @Autowired
     private CartaoRepository cartaoRepository;
+
+    @Autowired
+    private CarroRepository carroRepository;
+
+    @Autowired
+    private ColaboradorRepository colaboradorRepository;
 
     // Logger para registrar eventos e facilitar o rastreamento de erros.
     private static final Logger logger = LoggerFactory.getLogger(DespesaService.class);
@@ -38,8 +56,6 @@ public class DespesaService {
 
     /**
      * Construtor com injeção de dependências.
-     *
-     * @param repository Repositório de despesas.
      */
     @Autowired
     public DespesaService(DespesaRepository repository) {
@@ -48,8 +64,6 @@ public class DespesaService {
 
     /**
      * Retorna todas as despesas cadastradas.
-     *
-     * @return Lista de todas as despesas.
      */
     @Transactional(readOnly = true)
     public List<Despesa> findAll() {
@@ -64,15 +78,9 @@ public class DespesaService {
 
     /**
      * Busca uma despesa pelo ID.
-     * Utiliza a classe Optional para lidar com a possibilidade de um valor nulo.
-     * Se a despesa não for encontrada, lança uma ResourceNotFoundException.
-     *
-     * @param id ID da despesa.
-     * @return A despesa encontrada.
      */
     @Transactional(readOnly = true)
     public Despesa findById(Long id) {
-        // Se a despesa não for encontrada, loga o erro e lança uma exceção.
         return repository.findById(id)
                 .orElseThrow(() -> {
                     logger.error("Despesa com ID {} não encontrada!", id);
@@ -81,47 +89,150 @@ public class DespesaService {
     }
 
     /**
-     * Insere uma nova despesa no banco de dados.
-     * A operação é realizada dentro de uma transação.
-     *
-     * @param obj Objeto Despesa a ser inserido.
-     * @return A despesa inserida.
+     * Insere uma nova despesa no banco de dados usando a entidade direta.
      */
     @Transactional
     public Despesa insert(@Valid Despesa obj) {
         try {
-            // Verifica se o Cartao está detached e recarrega
             if (obj.getCartao() != null && obj.getCartao().getId() != null) {
                 Cartao cartao = cartaoRepository.findById(obj.getCartao().getId())
                         .orElseThrow(() -> new DatabaseException("Cartão não encontrado com o ID: " + obj.getCartao().getId()));
-                obj.setCartao(cartao); // Associa o Cartao recarregado à Despesa
+                obj.setCartao(cartao);
             }
 
-            Despesa savedDespesa = repository.save(obj); // Salva no banco de dados
-            // Despesa savedDespesa = repository.save(obj); // Salva no banco de dados
-            cache.put(savedDespesa.getId(), savedDespesa); // Atualiza o cache
-            logger.info("Despesa com ID {} cadastrado com sucesso.", savedDespesa.getId());
+            Despesa savedDespesa = repository.save(obj);
+            cache.put(savedDespesa.getId(), savedDespesa);
+            logger.info("Despesa com ID {} cadastrada com sucesso.", savedDespesa.getId());
             return savedDespesa;
         } catch (DataIntegrityViolationException e) {
             logger.error("Erro ao salvar Despesa: {}", e.getMessage());
-            throw new DatabaseException("Erro ao salvar o Despesa: violação de integridade.");
+            throw new DatabaseException("Erro ao salvar a Despesa: violação de integridade.");
         }
     }
 
     /**
-     * Atualiza uma despesa existente.
-     * Se a despesa não for encontrada, lança uma ResourceNotFoundException.
-     *
-     * @param id  ID da despesa a ser atualizada.
-     * @param obj Objeto Despesa com os novos dados.
-     * @return A despesa atualizada.
+     * Insere uma nova despesa a partir de um DespesaDTO (veio do Flutter),
+     * resolvendo as relações por ID e salvando também a faturaUrl.
+     */
+    @Transactional
+    public Despesa insertFromDTO(DespesaDTO dto) {
+        try {
+            Despesa despesa = new Despesa();
+            despesa.setNome(dto.getNome());
+            despesa.setDescricao(dto.getDescricao());
+            despesa.setData(dto.getData());
+            despesa.setValor(dto.getValor());
+            despesa.setQuantidade(dto.getQuantidade());
+            despesa.setUnidade(dto.getUnidade());
+            despesa.setFaturaUrl(dto.getFaturaUrl()); // Atribui o URL da fatura/recibo
+
+            // Resolve e valida o Cartão
+            if (dto.getCartaoId() != null) {
+                Cartao cartao = cartaoRepository.findById(dto.getCartaoId())
+                        .orElseThrow(() -> new DatabaseException("Cartão não encontrado com o ID: " + dto.getCartaoId()));
+                despesa.setCartao(cartao);
+            }
+
+            // Resolve e valida o Carro
+            if (dto.getCarroId() != null) {
+                Carro carro = carroRepository.findById(dto.getCarroId())
+                        .orElseThrow(() -> new DatabaseException("Carro não encontrado com o ID: " + dto.getCarroId()));
+                despesa.setCarro(carro);
+            }
+
+            // Resolve o Motorista (opcional)
+            if (dto.getMotoristaId() != null) {
+                Colaborador motorista = colaboradorRepository.findById(dto.getMotoristaId())
+                        .orElseThrow(() -> new DatabaseException("Motorista não encontrado com o ID: " + dto.getMotoristaId()));
+                despesa.setMotorista(motorista);
+            }
+
+            Despesa savedDespesa = repository.save(despesa);
+            cache.put(savedDespesa.getId(), savedDespesa);
+            logger.info("Despesa DTO com ID {} cadastrada com sucesso.", savedDespesa.getId());
+            return savedDespesa;
+        } catch (DataIntegrityViolationException e) {
+            logger.error("Erro ao salvar Despesa via DTO: {}", e.getMessage());
+            throw new DatabaseException("Erro ao salvar a Despesa: violação de integridade.");
+        }
+    }
+
+    /**
+     * Atualiza uma despesa existente a partir de um DespesaDTO.
+     */
+    @Transactional
+    public Despesa updateFromDTO(Long id, DespesaDTO dto) {
+        try {
+            return repository.findById(id)
+                    .map(entity -> {
+                        entity.setNome(dto.getNome());
+                        entity.setDescricao(dto.getDescricao());
+                        entity.setData(dto.getData());
+                        entity.setValor(dto.getValor());
+                        entity.setQuantidade(dto.getQuantidade());
+                        entity.setUnidade(dto.getUnidade());
+                        entity.setFaturaUrl(dto.getFaturaUrl()); // Atualiza o URL da fatura/recibo
+
+                        // Atualiza Cartão se fornecido
+                        if (dto.getCartaoId() != null) {
+                            Cartao cartao = cartaoRepository.findById(dto.getCartaoId())
+                                    .orElseThrow(() -> new DatabaseException("Cartão não encontrado com o ID: " + dto.getCartaoId()));
+                            entity.setCartao(cartao);
+                        }
+
+                        // Atualiza Carro se fornecido
+                        if (dto.getCarroId() != null) {
+                            Carro carro = carroRepository.findById(dto.getCarroId())
+                                    .orElseThrow(() -> new DatabaseException("Carro não encontrado com o ID: " + dto.getCarroId()));
+                            entity.setCarro(carro);
+                        }
+
+                        // Atualiza Motorista se fornecido
+                        if (dto.getMotoristaId() != null) {
+                            Colaborador motorista = colaboradorRepository.findById(dto.getMotoristaId())
+                                    .orElseThrow(() -> new DatabaseException("Motorista não encontrado com o ID: " + dto.getMotoristaId()));
+                            entity.setMotorista(motorista);
+                        }
+
+                        Despesa updatedDespesa = repository.save(entity);
+                        cache.put(id, updatedDespesa);
+                        logger.info("Despesa com ID {} atualizada com sucesso via DTO.", id);
+                        return updatedDespesa;
+                    })
+                    .orElseThrow(() -> new ResourceNotFoundException(id));
+        } catch (DataIntegrityViolationException e) {
+            logger.error("Erro ao atualizar despesa ID {}: {}", id, e.getMessage());
+            throw new DatabaseException("Erro ao atualizar a despesa: violação de integridade.");
+        }
+    }
+
+    /**
+     * Atualiza apenas o URL da fatura de uma despesa específica.
+     */
+    @Transactional
+    public Despesa updateFaturaUrl(Long id, String faturaUrl) {
+        try {
+            Despesa despesa = findById(id);
+            despesa.setFaturaUrl(faturaUrl);
+            
+            Despesa updatedDespesa = repository.save(despesa);
+            cache.put(id, updatedDespesa); // Atualiza também o cache
+            logger.info("URL da fatura da despesa ID {} atualizado com sucesso.", id);
+            return updatedDespesa;
+        } catch (DataIntegrityViolationException e) {
+            logger.error("Erro ao atualizar fatura da despesa ID {}: {}", id, e.getMessage());
+            throw new DatabaseException("Erro ao atualizar a fatura da despesa.");
+        }
+    }
+
+    /**
+     * Atualiza uma despesa existente com base na entidade direta.
      */
     @Transactional
     public Despesa update(Long id, @Valid Despesa obj) {
         try {
             return repository.findById(id)
                     .map(entity -> {
-                        // Atualiza os campos
                         entity.setCartao(obj.getCartao());
                         entity.setNome(obj.getNome());
                         entity.setDescricao(obj.getDescricao());
@@ -129,25 +240,22 @@ public class DespesaService {
                         entity.setMotorista(obj.getMotorista());
                         entity.setData(obj.getData());
                         entity.setValor(obj.getValor());
+                        entity.setFaturaUrl(obj.getFaturaUrl());
 
-                        // Salva e retorna o carro atualizado
                         Despesa updatedDespesa = repository.save(entity);
-                        logger.info("Carro com ID {} atualizado com sucesso.", id);
+                        cache.put(id, updatedDespesa);
+                        logger.info("Despesa com ID {} atualizada com sucesso.", id);
                         return updatedDespesa;
                     })
                     .orElseThrow(() -> new ResourceNotFoundException(id));
         } catch (DataIntegrityViolationException e) {
-            logger.error("Erro ao atualizar carro ID {}: {}", id, e.getMessage());
-            throw new DatabaseException("Erro ao atualizar o carro: violação de integridade.");
+            logger.error("Erro ao atualizar despesa ID {}: {}", id, e.getMessage());
+            throw new DatabaseException("Erro ao atualizar a despesa: violação de integridade.");
         }
     }
 
     /**
      * Deleta uma despesa com base no ID.
-     * Se a despesa não existir, lança uma ResourceNotFoundException.
-     * Se houver um problema de integridade de dados, lança uma DatabaseException.
-     *
-     * @param id ID da despesa a ser deletada.
      */
     @Transactional
     public void delete(Long id) {
@@ -158,7 +266,6 @@ public class DespesaService {
             logger.error("Erro ao deletar despesa com ID {}: não encontrada.", id);
             throw new ResourceNotFoundException(id);
         } catch (DataIntegrityViolationException e) {
-            // Caso haja violação de integridade no banco de dados (ex: restrições de chave estrangeira).
             logger.error("Erro ao deletar despesa com ID {}: violação de integridade.", id);
             throw new DatabaseException(e.getMessage());
         }

@@ -80,17 +80,21 @@ public class Despesa {
     @PositiveOrZero(message = "A unidade deve ser positiva ou zero")
     private Double unidade;
 
+    // URL ou caminho da imagem da fatura/recibo da despesa
+    @Column(name = "fatura_url", length = 255)
+    private String faturaUrl;
+
     // Construtor padrão necessário para a persistência no JPA
     public Despesa() {
     }
 
-    // Construtor sem quantidade e unidade
-    public Despesa(Long id, Cartao cartao, String nome, String descricao, Carro carro, Colaborador motorista, Instant data, Double valor) {
-        this(id, cartao, nome, descricao, carro, motorista, data, valor, null, null); // quantidade e unidade são null por padrão
+    // Construtor sem quantidade e unidade (mantido para compatibilidade)
+    public Despesa(Long id, Cartao cartao, String nome, String descricao, Carro carro, Colaborador motorista, Instant data, Double valor, String faturaUrl) {
+        this(id, cartao, nome, descricao, carro, motorista, data, valor, null, null, faturaUrl);
     }
 
-    // Construtor com parâmetros para facilitar a criação de objetos de despesa
-    public Despesa(Long id, Cartao cartao, String nome, String descricao, Carro carro, Colaborador motorista, Instant data, Double valor, Integer quantidade, Double unidade) {
+    // Construtor completo com parâmetros, incluindo a faturaUrl
+    public Despesa(Long id, Cartao cartao, String nome, String descricao, Carro carro, Colaborador motorista, Instant data, Double valor, Integer quantidade, Double unidade, String faturaUrl) {
         this.id = id;
         this.cartao = cartao;
         this.nome = nome;
@@ -101,6 +105,7 @@ public class Despesa {
         this.valor = valor;
         this.quantidade = quantidade;
         this.unidade = unidade;
+        this.faturaUrl = faturaUrl;
     }
 
     // Getters e Setters para acessar e modificar os atributos
@@ -169,6 +174,10 @@ public class Despesa {
         this.valor = valor;
     }
 
+    public Integer getQuantidade() {
+        return quantidade;
+    }
+
     public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
     }
@@ -181,8 +190,12 @@ public class Despesa {
         this.unidade = unidade;
     }
 
-    public Integer getQuantidade() {
-        return quantidade;
+    public String getFaturaUrl() {
+        return faturaUrl;
+    }
+
+    public void setFaturaUrl(String faturaUrl) {
+        this.faturaUrl = faturaUrl;
     }
 
     @Override
@@ -195,7 +208,6 @@ public class Despesa {
         if (o == null || getClass() != o.getClass()) return false;
         Despesa despesa = (Despesa) o;
         return Objects.equals(id, despesa.id); // Compara as despesas com base no ID
-
     }
 
     @Override
@@ -209,6 +221,7 @@ public class Despesa {
                 ", motorista=" + (motorista != null ? motorista.getId() : "null") +
                 ", data=" + data +
                 ", valor=" + valor +
+                ", faturaUrl='" + faturaUrl + '\'' +
                 '}';
     }
 }

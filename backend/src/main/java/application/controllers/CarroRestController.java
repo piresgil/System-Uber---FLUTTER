@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/carros")
+@CrossOrigin(origins = "*") // Adiciona isto para o Flutter Web não ser bloqueado
 @RequiredArgsConstructor // Injeta CarroService automaticamente via construtor
 public class CarroRestController {
 
