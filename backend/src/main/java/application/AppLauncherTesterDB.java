@@ -15,7 +15,6 @@ import java.util.List;
 @Component
 public class AppLauncherTesterDB {
 
-        // Injeção de Dependências
         @Autowired
         private UserRepository userRepository;
 
@@ -35,7 +34,7 @@ public class AppLauncherTesterDB {
         private PagamentoRepository pagamentoRepository;
 
         @EventListener(ApplicationReadyEvent.class)
-        @Transactional(timeout = 10) // Tempo limite de 10 segundos
+        @Transactional(timeout = 10)
         public void testeDB() {
 
                 System.out.println("inicio**************************************************************************");
@@ -46,113 +45,57 @@ public class AppLauncherTesterDB {
                 User user4 = new User(null, "b", "a@b", "b");
                 User user5 = new User(null, "c", "a@c", "c");
 
-                // COLABORADORES
-                Colaborador colaborador1 = new Colaborador(
-                                null,
-                                "Ana",
-                                "Ana@gmail",
-                                "922 222 222",
-                                TipoColaborador.ADMINISTRATIVO,
+                Colaborador colaborador1 = new Colaborador(null, "Ana", "Ana@gmail", "922 222 222",
+                                TipoColaborador.ADMINISTRATIVO, null);
+                Colaborador colaborador2 = new Colaborador(null, "Marco", "Marco@gmail", "922 222 222",
+                                TipoColaborador.GESTOR, null);
+                Colaborador colaborador3 = new Colaborador(null, "a", "a@aa", "922 222 222", TipoColaborador.MOTORISTA,
+                                null);
+                Colaborador colaborador4 = new Colaborador(null, "b", "a@bb", "922 222 222", TipoColaborador.OUTRO,
+                                null);
+                Colaborador colaborador5 = new Colaborador(null, "c", "a@cc", "922 222 222", TipoColaborador.MOTORISTA,
                                 null);
 
-                Colaborador colaborador2 = new Colaborador(
-                                null,
-                                "Marco",
-                                "Marco@gmail",
-                                "922 222 222",
-                                TipoColaborador.GESTOR,
-                                null);
+                // CARROS (Utilizando setters para evitar erros de ordem de parâmetros)
+                Carro carro1 = new Carro();
+                carro1.setMarca("Tesla");
+                carro1.setModelo("Electrico");
+                carro1.setMatricula("123-ABC-321");
+                carro1.setDocumentoUrl("/uploads/testes/img test_1.png");
+                carro1.setSeguroUrl("/uploads/testes/img test_1.png");
+                carro1.setInspecaoUrl("/uploads/testes/img test_1.png");
 
-                Colaborador colaborador3 = new Colaborador(
-                                null,
-                                "a",
-                                "a@aa",
-                                "922 222 222",
-                                TipoColaborador.MOTORISTA,
-                                null);
+                Carro carro2 = new Carro();
+                carro2.setMarca("Renault");
+                carro2.setModelo("Clio");
+                carro2.setMatricula("321-CBA-321");
+                carro2.setDocumentoUrl("/uploads/testes/img test_2.png");
+                carro2.setSeguroUrl("/uploads/testes/img test_2.png");
+                carro2.setInspecaoUrl("/uploads/testes/img test_2.png");
 
-                Colaborador colaborador4 = new Colaborador(
-                                null,
-                                "b",
-                                "a@bb",
-                                "922 222 222",
-                                TipoColaborador.OUTRO,
-                                null);
+                Carro carro3 = new Carro();
+                carro3.setMarca("a");
+                carro3.setModelo("a");
+                carro3.setMatricula("a");
+                carro3.setDocumentoUrl("/uploads/testes/img test_3.png");
+                carro3.setSeguroUrl("/uploads/testes/img test_3.png");
+                carro3.setInspecaoUrl("/uploads/testes/img test_3.png");
 
-                Colaborador colaborador5 = new Colaborador(
-                                null,
-                                "c",
-                                "a@cc",
-                                "922 222 222",
-                                TipoColaborador.MOTORISTA,
-                                null);
+                Carro carro4 = new Carro();
+                carro4.setMarca("b");
+                carro4.setModelo("b");
+                carro4.setMatricula("b");
+                carro4.setDocumentoUrl("/uploads/testes/img test_4.png");
+                carro4.setSeguroUrl("/uploads/testes/img test_4.png");
+                carro4.setInspecaoUrl("/uploads/testes/img test_4.png");
 
-                // CARROS
-                Carro carro1 = new Carro(
-                                null,
-                                "Tesla",
-                                "Electrico",
-                                "123-ABC-321",
-                                false,
-                                10.0,
-                                true,
-                                null, // autonomia
-                                null, // cartoes
-                                null, // motoristas
-                                null // despesas
-                );
-
-                Carro carro2 = new Carro(
-                                null,
-                                "Renault",
-                                "Clio",
-                                "321-CBA-321",
-                                false,
-                                100.0,
-                                true,
-                                null, // autonomia
-                                null, // cartoes
-                                null, // motoristas
-                                null);
-
-                Carro carro3 = new Carro(
-                                null,
-                                "a",
-                                "a",
-                                "a",
-                                false,
-                                100.0,
-                                true,
-                                null, // autonomia
-                                null, // cartoes
-                                null, // motoristas
-                                null);
-
-                Carro carro4 = new Carro(
-                                null,
-                                "b",
-                                "b",
-                                "b",
-                                false,
-                                100.0,
-                                true,
-                                null, // autonomia
-                                null, // cartoes
-                                null, // motoristas
-                                null);
-
-                Carro carro5 = new Carro(
-                                null,
-                                "c",
-                                "c",
-                                "c",
-                                false,
-                                100.0,
-                                true,
-                                null, // autonomia
-                                null, // cartoes
-                                null, // motoristas
-                                null);
+                Carro carro5 = new Carro();
+                carro5.setMarca("c");
+                carro5.setModelo("c");
+                carro5.setMatricula("c");
+                carro5.setDocumentoUrl("/uploads/testes/img test_5.png");
+                carro5.setSeguroUrl("/uploads/testes/img test_5.png");
+                carro5.setInspecaoUrl("/uploads/testes/img test_5.png");
 
                 Cartao cartao1 = new Cartao(null, TipoCartao.ABASTECIMENTO, "54321", "54321", "Prio", carro1);
                 Cartao cartao2 = new Cartao(null, TipoCartao.PORTAGEM, "12345", "12345", "Via Verde", carro1);
@@ -161,8 +104,7 @@ public class AppLauncherTesterDB {
                 Cartao cartao5 = new Cartao(null, TipoCartao.PORTAGEM, "3", "3", "V3", carro5);
 
                 Despesa despesa1 = new Despesa(null, cartao1, "Gasóleo", "gasóleo", cartao1.getCarro(), colaborador2,
-                                Instant.now(), 10.0, 50, 10.0,
-                                "/uploads/testes/img test_1.png");
+                                Instant.now(), 10.0, 50, 10.0, "/uploads/testes/img test_1.png");
 
                 Despesa despesa2 = new Despesa(null, cartao2, "outra", "outra", cartao2.getCarro(), colaborador1,
                                 Instant.now(), 20.0, "/uploads/testes/img test_2.png");
@@ -176,30 +118,17 @@ public class AppLauncherTesterDB {
                 Despesa despesa5 = new Despesa(null, cartao5, "4", "4", cartao5.getCarro(), colaborador5, Instant.now(),
                                 50.0, "/uploads/testes/img test_5.png");
 
-                // PAGAMENTOS
-                Pagamento pagamento1 = new Pagamento(
-                                colaborador1,
-                                Plataforma.UBER,
-                                LocalDate.now(),
-                                1000.0,
+                Pagamento pagamento1 = new Pagamento(colaborador1, Plataforma.UBER, LocalDate.now(), 1000.0,
                                 TipoPagamento.MENSAL);
-
-                Pagamento pagamento2 = new Pagamento(
-                                colaborador2,
-                                Plataforma.BOLT,
-                                LocalDate.now(),
-                                500.0,
+                Pagamento pagamento2 = new Pagamento(colaborador2, Plataforma.BOLT, LocalDate.now(), 500.0,
                                 TipoPagamento.SEMANAL);
-
-                Pagamento pagamento3 = new Pagamento(
-                                colaborador2,
-                                Plataforma.OUTRA,
-                                LocalDate.now(),
-                                500.0,
+                Pagamento pagamento3 = new Pagamento(colaborador2, Plataforma.OUTRA, LocalDate.now(), 500.0,
                                 TipoPagamento.FIXO);
 
-                // Salvar entidades na ordem correta
                 userRepository.saveAll(List.of(user1, user2, user3, user4, user5));
+                userRepository.saveAll(List.of(user1, user2, user3, user4, user5));
+
+                // Adiciona estes saves para popular a base de dados corretamente:
                 colaboradorRepository
                                 .saveAll(List.of(colaborador1, colaborador2, colaborador3, colaborador4, colaborador5));
                 carroRepository.saveAll(List.of(carro1, carro2, carro3, carro4, carro5));
@@ -207,6 +136,6 @@ public class AppLauncherTesterDB {
                 despesaRepository.saveAll(List.of(despesa1, despesa2, despesa3, despesa4, despesa5));
                 pagamentoRepository.saveAll(List.of(pagamento1, pagamento2, pagamento3));
 
-                System.out.println("Base de dados populada com sucesso!");
+                System.out.println("fim**************************************************************************");
         }
 }

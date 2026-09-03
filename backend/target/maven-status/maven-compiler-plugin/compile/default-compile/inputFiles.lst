@@ -15,6 +15,7 @@ C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java
 C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\dto\CartaoDTO.java
 C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\dto\ColaboradorDTO.java
 C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\dto\ContratoDTO.java
+C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\dto\DespesaDTO.java
 C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\dto\PagamentoDTO.java
 C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\mappers\CarroMapper.java
 C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\mappers\CartaoMapper.java
@@ -46,6 +47,7 @@ C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java
 C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\services\DespesaService.java
 C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\services\exceptions\DatabaseException.java
 C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\services\exceptions\ResourceNotFoundException.java
+C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\services\FileStorageService.java
 C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\services\PagamentoService.java
 C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\services\UserService.java
 C:\Projetos\Java\WorkSpace\Portfolio\system-uber - FLUTTER\backend\src\main\java\application\util\LogUtils.java

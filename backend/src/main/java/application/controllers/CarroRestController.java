@@ -1,115 +1,66 @@
 package application.controllers;
 
 import application.dto.CarroDTO;
-import application.mappers.CarroMapper;
-import application.model.Carro;
 import application.services.CarroService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
-/**
- * Controlador REST responsável pela gestão de Carros.
- *
- * Funcionalidades:
- * - Listar carros
- * - Buscar por ID
- * - Criar novo carro
- * - Atualizar carro existente
- * - Remover carro
- *
- * Utiliza DTOs para evitar exposição direta da entidade.
- */
 @RestController
 @RequestMapping("/carros")
-@CrossOrigin(origins = "*") // Adiciona isto para o Flutter Web não ser bloqueado
-@RequiredArgsConstructor // Injeta CarroService automaticamente via construtor
+@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class CarroRestController {
 
-    /**
-     * Serviço responsável pela lógica de negócio dos carros.
-     * Declarado como final para uso com @RequiredArgsConstructor.
-     */
     private final CarroService service;
 
-    /**
-     * Retorna todos os carros ativos.
-     *
-     * @return Lista de CarroDTO
-     */
     @GetMapping
     public ResponseEntity<List<CarroDTO>> findAll() {
-
-        // Converte entidades → DTOs
-        List<CarroDTO> list = service.findAll()
-                .stream()
-                .map(CarroMapper::toDTO)
-                .collect(Collectors.toList());
-
+        List<CarroDTO> list = service.findAll();
         return ResponseEntity.ok(list);
     }
 
-    /**
-     * Busca um carro pelo ID.
-     *
-     * @param id ID do carro
-     * @return CarroDTO correspondente
-     */
     @GetMapping("/{id}")
     public ResponseEntity<CarroDTO> findById(@PathVariable Long id) {
-
-        Carro obj = service.findById(id);
-        return ResponseEntity.ok(CarroMapper.toDTO(obj));
+        CarroDTO dto = service.findById(id);
+        return ResponseEntity.ok(dto);
     }
 
-    /**
-     * Regista um novo carro.
-     *
-     * @param dto Dados do carro
-     * @return CarroDTO criado
-     */
     @PostMapping
-    public ResponseEntity<CarroDTO> insert(@RequestBody CarroDTO dto) {
-
-        Carro entity = CarroMapper.toEntity(dto);
-        entity = service.insert(entity);
-
-        // Cria URI do novo recurso
-        URI uri = URI.create("/carros/" + entity.getId());
-
-        return ResponseEntity.created(uri).body(CarroMapper.toDTO(entity));
+    public ResponseEntity<?> insert(@RequestBody CarroDTO dto) {
+        try {
+            CarroDTO newDto = service.insert(dto);
+            URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(newDto.getId())
+                    .toUri();
+            return ResponseEntity.created(uri).body(newDto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao criar carro: " + e.getMessage());
+        }
     }
 
-    /**
-     * Atualiza um carro existente.
-     *
-     * @param id  ID do carro
-     * @param dto Dados atualizados
-     * @return CarroDTO atualizado
-     */
     @PutMapping("/{id}")
-    public ResponseEntity<CarroDTO> update(@PathVariable Long id, @RequestBody CarroDTO dto) {
-
-        Carro entity = CarroMapper.toEntity(dto);
-        entity = service.update(id, entity);
-
-        return ResponseEntity.ok(CarroMapper.toDTO(entity));
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CarroDTO dto) {
+        try {
+            CarroDTO updatedDto = service.update(id, dto);
+            return ResponseEntity.ok(updatedDto);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao atualizar carro: " + e.getMessage());
+        }
     }
 
-    /**
-     * Remove um carro definitivamente.
-     *
-     * @param id ID do carro
-     * @return 204 No Content
-     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-
-        service.delete(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            service.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erro ao eliminar carro: " + e.getMessage());
+        }
     }
 }

@@ -1,6 +1,7 @@
 package application.controllers;
 
 import application.dto.CartaoDTO;
+import application.dto.CarroDTO;
 import application.mappers.CartaoMapper;
 import application.model.Cartao;
 import application.model.Carro;
@@ -51,8 +52,17 @@ public class CartaoRestController {
         Cartao entity = CartaoMapper.toEntity(dto);
 
         if (dto.getCarroId() != null) {
-            Carro carro = carroService.findById(dto.getCarroId());
-            entity.setCarro(carro);
+            // Como o carroService agora retorna um CarroDTO, convertemos para a entidade Carro
+            CarroDTO carroDto = carroService.findById(dto.getCarroId());
+            if (carroDto != null) {
+                Carro carro = new Carro();
+                carro.setId(carroDto.getId());
+                carro.setMarca(carroDto.getMarca());
+                carro.setModelo(carroDto.getModelo());
+                carro.setMatricula(carroDto.getMatricula());
+                // Se precisares de mais campos mapeados do CarroDTO para Carro, podes adicionar aqui
+                entity.setCarro(carro);
+            }
         }
 
         entity = service.insert(entity);
@@ -65,8 +75,16 @@ public class CartaoRestController {
         Cartao entity = CartaoMapper.toEntity(dto);
 
         if (dto.getCarroId() != null) {
-            Carro carro = carroService.findById(dto.getCarroId());
-            entity.setCarro(carro);
+            // Conversão idêntica para o Update
+            CarroDTO carroDto = carroService.findById(dto.getCarroId());
+            if (carroDto != null) {
+                Carro carro = new Carro();
+                carro.setId(carroDto.getId());
+                carro.setMarca(carroDto.getMarca());
+                carro.setModelo(carroDto.getModelo());
+                carro.setMatricula(carroDto.getMatricula());
+                entity.setCarro(carro);
+            }
         }
 
         entity = service.update(id, entity);

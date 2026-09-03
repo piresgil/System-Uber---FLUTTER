@@ -1,6 +1,6 @@
 package application.controllers;
 
-import application.model.Carro;
+import application.dto.CarroDTO;
 import application.services.CarroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +23,14 @@ public class CarroController {
 
     // 1. Listar todos os carros (GET: /api/carros)
     @GetMapping
-    public List<Carro> listarTodos() {
+    public List<CarroDTO> listarTodos() {
         return carroService.findAll();
     }
 
     // 2. Buscar carro por ID (GET: /api/carros/{id})
     @GetMapping("/{id}")
-    public ResponseEntity<Carro> buscarPorId(@PathVariable Long id) {
-        Carro carro = carroService.findById(id);
+    public ResponseEntity<CarroDTO> buscarPorId(@PathVariable Long id) {
+        CarroDTO carro = carroService.findById(id);
         return Optional.ofNullable(carro)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -38,9 +38,9 @@ public class CarroController {
 
     // 3. Registar/Criar novo carro (POST: /api/carros)
     @PostMapping
-    public ResponseEntity<Carro> criarCarro(@RequestBody Carro carro) {
+    public ResponseEntity<CarroDTO> criarCarro(@RequestBody CarroDTO carroDto) {
         try {
-            Carro novoCarro = carroService.insert(carro);
+            CarroDTO novoCarro = carroService.insert(carroDto);
             return ResponseEntity.ok(novoCarro);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
@@ -49,7 +49,7 @@ public class CarroController {
 
     // 4. Atualizar carro existente (PUT: /api/carros/{id})
     @PutMapping("/{id}")
-    public ResponseEntity<Carro> atualizarCarro(@PathVariable Long id, @RequestBody Carro carroDetails) {
+    public ResponseEntity<CarroDTO> atualizarCarro(@PathVariable Long id, @RequestBody CarroDTO carroDetails) {
         try {
             carroService.update(id, carroDetails);
             return ResponseEntity.ok(carroDetails);

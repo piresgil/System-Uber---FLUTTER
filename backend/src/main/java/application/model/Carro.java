@@ -13,106 +13,56 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Entidade Carro
- *
- * Representa um veículo no sistema, com suporte a:
- * - Soft delete (campo ativo)
- * - Filtro automático de registros ativos (@Where)
- * - Controle de concorrência otimista (@Version)
- * - Validações de campos obrigatórios
- * - Relações com Cartão, Colaborador e Despesa
- */
 @Entity
 @Table(name = "tb_carro")
-
-/**
- * Aplica automaticamente um filtro em TODAS as consultas:
- * Apenas carros com ativo = true serão retornados.
- * Isto implementa soft delete de forma transparente.
- */
 @Where(clause = "ativo = true")
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Carro {
 
-    /**
-     * Identificador único do carro.
-     * Gerado automaticamente pelo banco de dados.
-     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * Marca do carro (ex: Toyota, BMW).
-     * Campo obrigatório.
-     */
     @NotBlank(message = "A marca do carro não pode estar vazia")
     @Column(nullable = false, length = 100)
     private String marca;
 
-    /**
-     * Modelo do carro (ex: Corolla, Série 3).
-     * Campo obrigatório.
-     */
     @NotBlank(message = "O modelo do carro não pode estar vazio")
     @Column(nullable = false, length = 100)
     private String modelo;
 
-    /**
-     * Matrícula do carro.
-     * Deve ser única no sistema.
-     */
     @NotBlank(message = "A matrícula do carro não pode estar vazia")
     @Column(nullable = false, length = 100, unique = true)
     private String matricula;
 
-    /**
-     * Indica se o carro é alugado (true) ou próprio (false).
-     */
     @Column(nullable = false)
     private boolean alugado;
 
-    /**
-     * Quilometragem atual do carro.
-     * Campo obrigatório.
-     */
     @NotNull(message = "A quilometragem não pode ser nula")
     private Double kilometragem;
 
-    /**
-     * Indica se o carro está ativo no sistema.
-     * Usado para soft delete.
-     */
     @Column(nullable = false)
     private boolean ativo = true;
 
-    /**
-     * Controle de concorrência otimista.
-     * Evita conflitos em atualizações simultâneas.
-     */
+    // Campos específicos para as 3 fotos pedidas
+    @Column(length = 500)
+    private String documentoUrl;
+
+    @Column(length = 500)
+    private String seguroUrl;
+
+    @Column(length = 500)
+    private String inspecaoUrl;
+
     @Version
     private Integer version;
 
-    /**
-     * Relação 1:N com Cartão.
-     * Um carro pode ter vários cartões associados.
-     * Cascade ALL → operações no carro afetam os cartões.
-     * orphanRemoval → cartões órfãos são removidos automaticamente.
-     */
-    @OneToMany(mappedBy = "carro", fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "carro", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cartao> cartoes = new ArrayList<>();
 
-    /**
-     * Relação N:N com Colaborador.
-     * Um carro pode ter vários motoristas.
-     * Um motorista pode conduzir vários carros.
-     */
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "carro_colaborador",
@@ -121,18 +71,9 @@ public class Carro {
     )
     private List<Colaborador> motoristas = new ArrayList<>();
 
-    /**
-     * Relação 1:N com Despesa.
-     * Um carro pode ter várias despesas associadas.
-     */
-    @OneToMany(mappedBy = "carro", fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "carro", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Despesa> despesas = new ArrayList<>();
 
-    /**
-     * Igualdade baseada apenas no ID.
-     * Essencial para entidades JPA.
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -140,27 +81,8 @@ public class Carro {
         return Objects.equals(id, carro.id);
     }
 
-    /**
-     * Hash baseado no ID.
-     */
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    /**
-     * Representação textual útil para logs e debugging.
-     */
-    @Override
-    public String toString() {
-        return "Carro{" +
-                "id=" + id +
-                ", marca='" + marca + '\'' +
-                ", modelo='" + modelo + '\'' +
-                ", matricula='" + matricula + '\'' +
-                ", kilometragem=" + kilometragem +
-                ", alugado=" + alugado +
-                ", ativo=" + ativo +
-                '}';
     }
 }

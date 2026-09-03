@@ -3,11 +3,12 @@ package application.controllers;
 import application.dto.DespesaDTO;
 import application.model.Despesa;
 import application.services.DespesaService;
-import application.services.FileStorageService; // <-- Importante
+import application.services.FileStorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile; // <-- Importante
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 public class DespesaRestController {
 
     private final DespesaService despesaService;
-    private final FileStorageService fileStorageService; // <-- Injetado aqui
+    private final FileStorageService fileStorageService;
 
     @GetMapping
     public ResponseEntity<List<DespesaDTO>> findAll() {
@@ -42,28 +43,26 @@ public class DespesaRestController {
             Despesa despesaEntity = despesaService.insertFromDTO(dto); 
             DespesaDTO salvaDTO = convertToDTO(despesaEntity);
             
-            URI uri = URI.create("/api/despesas/" + salvaDTO.getId());
-            return ResponseEntity.created(uri).body(salvaDTO);
+            // CORREÇÃO: Uso do ServletUriComponentsBuilder para gerar a URI correta automaticamente
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{id}")
+                    .buildAndExpand(salvaDTO.getId())
+                    .toUri();
+
+            return ResponseEntity.created(location).body(salvaDTO);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    /**
-     * NOVO ENDPOINT: Faz o upload do ficheiro/fatura para uma despesa existente.
-     * URL final: POST /api/despesas/{id}/fatura
-     */
     @PostMapping("/{id}/fatura")
     public ResponseEntity<?> uploadFatura(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
         try {
-            // 1. Guarda o ficheiro na subpasta "faturas" usando o nosso serviço
             String fileUrl = fileStorageService.storeFile(file, "faturas");
 
-            // 2. Busca a despesa, atualiza o campo faturaUrl e guarda
             Despesa despesa = despesaService.findById(id);
             despesa.setFaturaUrl(fileUrl);
             
-            // Assume que tens um método no service para atualizar ou guardar a entidade
             Despesa despesaAtualizada = despesaService.updateFaturaUrl(id, fileUrl); 
 
             return ResponseEntity.ok(convertToDTO(despesaAtualizada));

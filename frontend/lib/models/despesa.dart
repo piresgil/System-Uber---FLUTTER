@@ -3,13 +3,13 @@ class Despesa {
   final String nome;
   final double valor;
   final double? quantidade;
-  final String? unidade;
+  final double? unidade;
   final DateTime? data;
   final String? descricao;
-  final String? cartaoId;
-  final String? carroId;
-  final String? motoristaId;
-  final String? faturaUrl; // <--- Adicionado aqui
+  final int? cartaoId;      // Alterado para int? para coincidir com o backend
+  final int? carroId;       // Alterado para int? para coincidir com o backend
+  final int? motoristaId;   // Alterado para int? para coincidir com o backend
+  final String? faturaUrl;
 
   Despesa({
     this.id,
@@ -22,7 +22,7 @@ class Despesa {
     this.cartaoId,
     this.carroId,
     this.motoristaId,
-    this.faturaUrl, // <--- Adicionado aqui
+    this.faturaUrl,
   });
 
   factory Despesa.fromJson(Map<String, dynamic> json) {
@@ -31,13 +31,13 @@ class Despesa {
       nome: json['nome'] ?? '',
       valor: (json['valor'] as num?)?.toDouble() ?? 0.0,
       quantidade: (json['quantidade'] as num?)?.toDouble(),
-      unidade: json['unidade'],
+      unidade: (json['unidade'] as num?)?.toDouble(),
       data: json['data'] != null ? DateTime.tryParse(json['data'].toString()) : null,
       descricao: json['descricao'],
-      cartaoId: json['cartaoId']?.toString(),
-      carroId: json['carroId']?.toString(),
-      motoristaId: json['motoristaId']?.toString(),
-      faturaUrl: json['faturaUrl']?.toString(), // <--- Adicionado aqui
+      cartaoId: json['cartaoId'] as int?,
+      carroId: json['carroId'] as int?,
+      motoristaId: json['motoristaId'] as int?,
+      faturaUrl: json['faturaUrl']?.toString(),
     );
   }
 
@@ -53,7 +53,7 @@ class Despesa {
       'cartaoId': cartaoId,
       'carroId': carroId,
       'motoristaId': motoristaId,
-      'faturaUrl': faturaUrl, // <--- Adicionado aqui
+      'faturaUrl': faturaUrl,
     };
   }
 }
